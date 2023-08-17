@@ -5,7 +5,7 @@ pipeline {
        stage('Checkout') {
            steps {
                // Checking out the source code from version control (e.g., Git)
-               git 'https://github.com/yourusername/hello-world.git'
+               git 'https://github.com/GIRI006/hellopy.git'
            }
        }
 
