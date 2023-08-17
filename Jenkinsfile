@@ -12,14 +12,14 @@ pipeline {
        stage('Build and Dockerize') {
            steps {
                
-               sh 'docker build -t hello-world .'
+               sh 'sudo docker build -t hello-world .'
            }
        }
 
        stage('Run in Docker') {
            steps {
                
-               sh 'docker run hello-world'
+               sh 'sudo docker run hello-world'
            }
        }
    }
