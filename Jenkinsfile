@@ -30,7 +30,7 @@ pipeline {
         stage('Deploy to k8s') {
             steps {
                 script {
-                    def kubeConfig = readFile("${JENKINS_HOME}/.kube/config")
+                    def kubeConfig = readFile("/home/ec2-user/.kube/config")
                     writeFile file: 'kubeconfig', text: kubeConfig
                     kubeConfig = readTrusted('kubeconfig')
                     kubernetesDeploy kubeconfigContent: kubeConfig, configs: 'hello.yaml'
