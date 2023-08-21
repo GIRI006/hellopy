@@ -1,26 +1,41 @@
 pipeline {
-   agent any
-
-   stages {
-       stage('Checkout') {
-           steps {
-               
-               git 'https://github.com/GIRI006/hellopy.git'
-           }
-       }
-
-       stage('Build and Dockerize') {
-           steps {
-               
-               sh 'sudo docker build -t hello-world .'
-           }
-       }
-
-       stage('Run in Docker') {
-           steps {
-               
-               sh 'sudo docker run hello-world'
-           }
-       }
-   }
+    agent any
+    environment {
+        registry = "girisatapathy/hello-world"
+        registryCredential = 'docker_hub'
+        dockerImage = ''
+    }
+    stages {
+        stage('Cloning Git') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Building image') {
+            steps {
+                script {
+                    dockerImage = docker.build(registry)
+                }
+            }
+        }
+        stage('Upload Image') {
+            steps {
+                script {
+                    docker.withRegistry('', registryCredential) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+        stage('Deploy to k8s') {
+            steps {
+                script {
+                    def kubeConfig = readFile("${JENKINS_HOME}/.kube/config")
+                    writeFile file: 'kubeconfig', text: kubeConfig
+                    kubeConfig = readTrusted('kubeconfig')
+                    kubernetesDeploy kubeconfigContent: kubeConfig, configs: 'hello.yaml'
+                }
+            }
+        }
+    }
 }
