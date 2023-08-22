@@ -1,109 +1,97 @@
 pipeline {
 
-    agent any
+agent any
 
-    environment {
+environment {
 
-        registry = "girisatapathy/hello-world"
+registry = "girisatapathy/hello-world"
 
-        registryCredential = 'docker_hub'
+registryCredential = 'docker_hub'
 
-        dockerImageTag = "${BUILD_NUMBER}"
+dockerImageTag = "${BUILD_NUMBER}"
 
-    }
+}
 
-    stages {
+stages {
 
-        stage('Cloning Git') {
+stage('Cloning Git') {
 
-            steps {
+steps {
 
-                checkout scm
+checkout scm
 
-            }
+}
 
-        }
+}
 
-        stage('Determine Previous Image Tag') {
+stage('Determine Previous Image Tag') {
 
-            steps {
+steps {
 
-                script {
+script {
 
-                 
+def previousTagFile = readFile("/var/lib/jenkins/workspace/hellopy/previous_docker_image_tag.txt")
 
-                    def previousTagFile = readFile("/var/lib/jenkins/workspace/hellopy/previous_docker_image_tag.txt")
+previousImageTag = previousTagFile.trim()
 
-                    previousImageTag = previousTagFile.trim()
+}
 
-                }
+}
 
-            }
+}
 
-        }
+stage('Building and Pushing Docker Image') {
 
-        stage('Building and Pushing Docker Image') {
+steps {
 
-            steps {
+script {
 
-                script {
+def dockerImage = docker.build("${registry}:${dockerImageTag}")
 
-                    
+docker.withRegistry('', registryCredential) {
 
-                    def dockerImage = docker.build("${registry}:${dockerImageTag}")
+dockerImage.push()
+
+}
+
+sh "docker rmi -f ${registry}:${previousImageTag}"
+
+}
+
+}
+
+}
+
+stage('Run Docker Image') {
+
+steps {
+
+script {
+
+docker.withRegistry('https://index.docker.io/v1/') {
+
+docker.image("${registry}:${dockerImageTag}").run()
+
+}
+
+}
+
+}
+
+}
+
+}
+
+post {
+
+always {
 
 
-                    
 
-                    docker.withRegistry('', registryCredential) {
+writeFile file: "/var/lib/jenkins/workspace/hellopy/previous_docker_image_tag.txt", text: "${dockerImageTag}"
 
-                        dockerImage.push()
+}
 
-                    }
-
-
-                    
-
-                    sh "docker rmi -f ${registry}:${previousImageTag}" 
-
-                }
-
-            }
-
-        }
-
-        stage('Run Docker Image') {
-
-            steps {
-
-                script {
-
-                    
-
-                    docker.withRegistry('https://index.docker.io/v1/') {
-
-                        docker.image("${registry}:${dockerImageTag}").run()
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    }
-
-    post {
-
-        always {
-
-            // Store the current build's Docker image tag for the next build
-
-            writeFile file: "/var/lib/jenkins/workspace/hellopy/previous_docker_image_tag.txt", text: "${dockerImageTag}"
-
-        }
-
-    }
+}
 
 }
