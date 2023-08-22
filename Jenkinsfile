@@ -64,7 +64,7 @@ pipeline {
 
                     // Remove the previous image with the old tag from your local machine
 
-                    sh "docker rmi ${registry}:${previousImageTag}" // Replace with appropriate logic
+                    sh "docker rmi -f ${registry}:${previousImageTag}" 
 
                 }
 
