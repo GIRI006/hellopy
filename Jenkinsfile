@@ -32,7 +32,7 @@ pipeline {
 
                     // Retrieve the previous build's Docker image tag from the Jenkins workspace
 
-                    def previousTagFile = readFile("${WORKSPACE}/previous_docker_image_tag.txt")
+                    def previousTagFile = readFile("/var/lib/jenkins/workspace/hellopy/previous_docker_image_tag.txt")
 
                     previousImageTag = previousTagFile.trim()
 
