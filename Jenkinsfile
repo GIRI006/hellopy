@@ -14,7 +14,7 @@ pipeline {
         stage('Building image') {
             steps {
                 script {
-                    dockerImage = docker.build(registry)
+                    dockerImage = docker.build(registry, '-t latest -t 1.0.0')
                 }
             }
         }
@@ -22,7 +22,8 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('', registryCredential) {
-                        dockerImage.push()
+                        dockerImage.push('latest')
+                        dockerImage.push('1.0.0')
                     }
                 }
             }
