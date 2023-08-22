@@ -3,7 +3,7 @@ pipeline {
    environment {
        registry = "girisatapathy/hello-world"
        registryCredential = 'docker_hub'
-       dockerImageTag = '${env.BUILD_ID}' // Specify the new tag for your image here
+      // dockerImageTag = '${env.BUILD_ID}' // Specify the new tag for your image here
    }
    stages {
        stage('Cloning Git') {
@@ -15,7 +15,7 @@ pipeline {
            steps {
                script {
                    // Define the image name with the new tag
-                   def dockerImage = docker.build("${registry}:${dockerImageTag}")
+                   def dockerImage = docker.build("${registry}:{build-number})
 
                    // Push the new image to the Docker registry
                    docker.withRegistry('', registryCredential) {
