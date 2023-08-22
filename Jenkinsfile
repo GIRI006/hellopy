@@ -30,7 +30,7 @@ pipeline {
 
                 script {
 
-                    // Retrieve the previous build's Docker image tag from the Jenkins workspace
+                 
 
                     def previousTagFile = readFile("/var/lib/jenkins/workspace/hellopy/previous_docker_image_tag.txt")
 
@@ -48,12 +48,12 @@ pipeline {
 
                 script {
 
-                    // Build the Docker image with the build number as the tag
+                    
 
                     def dockerImage = docker.build("${registry}:${dockerImageTag}")
 
 
-                    // Push the image to the Docker registry
+                    
 
                     docker.withRegistry('', registryCredential) {
 
@@ -62,7 +62,7 @@ pipeline {
                     }
 
 
-                    // Remove the previous image with the old tag from your local machine
+                    
 
                     sh "docker rmi -f ${registry}:${previousImageTag}" 
 
@@ -78,7 +78,7 @@ pipeline {
 
                 script {
 
-                    // Run a container based on the specified image tag
+                    
 
                     docker.withRegistry('https://index.docker.io/v1/') {
 
@@ -100,7 +100,7 @@ pipeline {
 
             // Store the current build's Docker image tag for the next build
 
-            writeFile file: "${WORKSPACE}/previous_docker_image_tag.txt", text: "${dockerImageTag}"
+            writeFile file: "/var/lib/jenkins/workspace/hellopy/previous_docker_image_tag.txt", text: "${dockerImageTag}"
 
         }
 
