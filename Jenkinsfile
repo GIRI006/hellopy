@@ -48,7 +48,7 @@ pipeline {
 
                     def previousTag = 'latest'
 
-                    sh "docker rmi ${registry}:${previousTag}"
+                    sh "docker rmi -f ${registry}:${previousTag}"
 
                 }
 
