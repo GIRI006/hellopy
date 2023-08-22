@@ -3,7 +3,8 @@ pipeline {
    environment {
        registry = "girisatapathy/hello-world"
        registryCredential = 'docker_hub'
-      // dockerImageTag = '${env.BUILD_ID}' // Specify the new tag for your image here
+       // Use BUILD_NUMBER environment variable as the Docker image tag
+       dockerImageTag = "${BUILD_NUMBER}"
    }
    stages {
        stage('Cloning Git') {
@@ -14,29 +15,25 @@ pipeline {
        stage('Building and Pushing Docker Image') {
            steps {
                script {
-                   // Define the image name with the new tag
-                   def dockerImage = docker.build("${registry}:{build-number}")
+                   // Build the Docker image with the build number as the tag
+                   def dockerImage = docker.build("${registry}:${dockerImageTag}")
 
-                   // Push the new image to the Docker registry
+                   // Push the image to the Docker registry
                    docker.withRegistry('', registryCredential) {
                        dockerImage.push()
                    }
-
-                   // Remove the previous image with an older tag
-                   def previousTag = '0.9.0' // Replace with the tag you want to remove
-                   sh "docker rmi ${registry}:${previousTag}"
                }
            }
        }
        stage('Run Docker Image') {
            steps {
                script {
+                   // Run a container based on the specified image tag
                    docker.withRegistry('https://index.docker.io/v1/') {
-                       docker.image('girisatapathy/helloworldpy').run()
+                       docker.image("${registry}:${dockerImageTag}").run()
                    }
                }
            }
        }
    }
 }
-
