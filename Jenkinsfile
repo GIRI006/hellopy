@@ -3,8 +3,8 @@ pipeline {
    environment {
        registry = "girisatapathy/hello-world"
        registryCredential = 'docker_hub'
-       // Use BUILD_NUMBER environment variable as the Docker image tag
        dockerImageTag = "${BUILD_NUMBER}"
+       previousImageTag = "${BUILD_NUMBER - 1}"
    }
    stages {
        stage('Cloning Git') {
@@ -22,6 +22,9 @@ pipeline {
                    docker.withRegistry('', registryCredential) {
                        dockerImage.push()
                    }
+
+                   // Remove the previous image with the old tag from your local machine
+                   sh "docker rmi ${registry}:${previousImageTag}" // Replace with appropriate logic
                }
            }
        }
@@ -37,3 +40,6 @@ pipeline {
        }
    }
 }
+
+
+
