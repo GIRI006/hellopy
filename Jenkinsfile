@@ -8,7 +8,7 @@ pipeline {
 
         registryCredential = 'docker_hub'
 
-        dockerImageTag = '1.0.0' // Specify the new tag for your image here
+        dockerImageTag = '1.1.0'
 
     }
 
@@ -46,7 +46,7 @@ pipeline {
 
                     
 
-                    def previousTag = 'latest'
+                    def previousTag = '1.0.0'
 
                     sh "docker rmi -f ${registry}:${previousTag}"
 
