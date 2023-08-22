@@ -30,7 +30,9 @@ pipeline {
         stage('Run Docker Image') {
             steps {
                 script {
-                    docker.run(image: dockerImage)
+                    docker.withRegistry('https://index.docker.io/v1/') {
+                        docker.image('girisatapathy/helloworldpy').run()
+                    }
                 }
             }
         }
