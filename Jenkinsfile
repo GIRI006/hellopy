@@ -27,13 +27,10 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to k8s') {
+        stage('Run Docker Image') {
             steps {
                 script {
-                    def kubeConfig = readFile("/home/ec2-user/.kube/config")
-                    writeFile file: 'kubeconfig', text: kubeConfig
-                    kubeConfig = readTrusted('kubeconfig')
-                    kubernetesDeploy kubeconfigContent: kubeConfig, configs: 'hello.yaml'
+                    docker.run(image: dockerImage)
                 }
             }
         }
