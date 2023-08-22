@@ -15,7 +15,7 @@ pipeline {
            steps {
                script {
                    // Define the image name with the new tag
-                   def dockerImage = docker.build("${registry}:{build-number})
+                   def dockerImage = docker.build("${registry}:{build-number}")
 
                    // Push the new image to the Docker registry
                    docker.withRegistry('', registryCredential) {
