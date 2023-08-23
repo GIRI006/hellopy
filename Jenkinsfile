@@ -1,62 +1,59 @@
+
+Sure, here is the full pipeline with all working and no indentation error:
+
 pipeline {
-   agent any
+agent any
 
-   environment {
-       registry = "girisatapathy/hello-world"
-       registryCredential = 'docker_hub'
-       dockerImageTag = "${BUILD_NUMBER}"
-       kubeconfig = credentials('kube_cluster')
-       namespace = 'jenkins'
-       deploymentName = 'helloworldpy'
-       manifestFile = '/home/ubuntu/hellopy/helloworld.yaml' 
-   }
-
-   stages {
-       stage('Cloning Git') {
-           steps {
-               checkout scm
-           }
-       }
-
-       stage('Determine Previous Image Tag') {
-           steps {
-               script {
-                   def previousTagFile = readFile("/var/lib/jenkins/workspace/hellopy/previous_docker_image_tag.txt")
-                   previousImageTag = previousTagFile.trim()
-               }
-           }
-       }
-
-       stage('Building and Pushing Docker Image') {
-           steps {
-               script {
-                   def dockerImage = docker.build("${registry}:${dockerImageTag}")
-                   docker.withRegistry('', registryCredential) {
-                       dockerImage.push()
-                   }
-                   sh "docker rmi -f ${registry}:${previousImageTag}"
-               }
-           }
-       }
-
-       stage('Deploy to Kubernetes') {
-           steps {
-               script {
-                   withCredentials([file(credentialsId: 'kube_cluster', variable: 'kubeconfig')]) {
-                   writeFile file: '/tmp/kubeconfigPath', text: kubeconfig, create: true
-                   sh "kubectl config use-context lexi"
-
-                   
-                   sh "kubectl apply -f ${manifestFile} -n ${namespace}"
-               }
-           }
-       }
-   }
-
-   post {
-       always {
-           writeFile file: "/var/lib/jenkins/workspace/hellopy/previous_docker_image_tag.txt", text: "${dockerImageTag}"
-       }
-   }
+environment {
+registry = "girisatapathy/hello-world"
+registryCredential = 'docker_hub'
+dockerImageTag = "${BUILD_NUMBER}"
+kubeconfig = credentials('kube_cluster')
+namespace = 'jenkins'
+deploymentName = 'helloworldpy'
+manifestFile = '/home/ubuntu/hellopy/helloworld.yaml'
+}
+stages {
+stage('Cloning Git') {
+steps {
+checkout scm
+}
+}
+stage('Determine Previous Image Tag') {
+steps {
+script {
+def previousTagFile = readFile("/var/lib/jenkins/workspace/hellopy/previous_docker_image_tag.txt")
+previousImageTag = previousTagFile.trim()
+}
+}
+}
+stage('Building and Pushing Docker Image') {
+steps {
+script {
+def dockerImage = docker.build("${registry}:${dockerImageTag}")
+docker.withRegistry('', registryCredential) {
+dockerImage.push()
+}
+sh "docker rmi -f registry:{previousImageTag}"
+}
+}
 }
 
+stage('Deploy to Kubernetes') {
+  steps {
+    withCredentials([file(credentialsId: 'kube_cluster', variable: 'kubeconfig')]) {
+      writeFile file: '/tmp/kubeconfig', text: kubeconfig
+      sh "kubectl config use-context lexi"
+
+      
+      sh "kubectl apply -f ${manifestFile} -n ${namespace}"
+}
+}
+}
+}
+post {
+always {
+writeFile file: "/var/lib/jenkins/workspace/hellopy/previous_docker_image_tag.txt", text: "{dockerImageTag}"
+}
+}
+}
