@@ -57,3 +57,4 @@ writeFile file: "/var/lib/jenkins/workspace/hellopy/previous_docker_image_tag.tx
 }
 }
 }
+}
