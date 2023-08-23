@@ -1,6 +1,3 @@
-
-Sure, here is the full pipeline with all working and no indentation error:
-
 pipeline {
 agent any
 
