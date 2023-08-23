@@ -42,8 +42,8 @@ pipeline {
        stage('Deploy to Kubernetes') {
            steps {
                script {
-                   def kubeconfigPath = "/home/ubuntu/.kube/config"
-                   writeFile file: kubeconfigPath, text: kubeconfig, create: true
+                   withCredentials([file(credentialsId: 'kube_cluster', variable: 'kubeconfig')]) {
+                   writeFile file: '/tmp/kubeconfigPath', text: kubeconfig, create: true
                    sh "kubectl config use-context lexi"
 
                    
