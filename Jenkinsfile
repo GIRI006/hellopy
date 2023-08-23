@@ -43,7 +43,7 @@ pipeline {
            steps {
                script {
                    def kubeconfigPath = "/home/ubuntu/.kube/config"
-                   writeFile file: kubeconfigPath, text: kubeconfig, append: true
+                   writeFile file: kubeconfigPath, text: kubeconfig, create: true
                    sh "kubectl config use-context lexi"
 
                    
