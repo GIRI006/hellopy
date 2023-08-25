@@ -1,4 +1,4 @@
-pipeline { writeFile file: '/tmp/kubeconfig', text: kubeconfig
+pipeline {
   agent any
 
   environment {
@@ -9,6 +9,7 @@ pipeline { writeFile file: '/tmp/kubeconfig', text: kubeconfig
     namespace = 'jenkins'
     deploymentName = 'helloworldpy'
     manifestFile = '/home/ubuntu/hellopy/helloworld.yaml'
+    kubeconfigPath = "/home/ubuntu/.kube/config"
   }
 
   stages {
@@ -41,12 +42,7 @@ pipeline { writeFile file: '/tmp/kubeconfig', text: kubeconfig
 
     stage('Deploy to Kubernetes') {
       steps {
-        //withCredentials([file(credentialsId: 'kube_cluster', variable: 'kubeconfig')]) {
-          def kubeconfigPath = "/home/ubuntu/.kube/config"  
-          writeFile file: '/tmp/kubeconfig', text: kubeconfig
-         
-          sh "kubectl --kubeconfig=${kubeconfig} apply -f ${manifestFile} -n ${namespace}"
-        
+        sh "kubectl --kubeconfig=${kubeconfigPath} apply -f ${manifestFile} -n ${namespace}"
       }
     }
   }
@@ -57,3 +53,4 @@ pipeline { writeFile file: '/tmp/kubeconfig', text: kubeconfig
     }
   }
 }
+
