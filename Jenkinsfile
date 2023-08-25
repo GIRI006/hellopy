@@ -46,7 +46,7 @@ pipeline { writeFile file: '/tmp/kubeconfig', text: kubeconfig
           writeFile file: '/tmp/kubeconfig', text: kubeconfig
          
           sh "kubectl --kubeconfig=${kubeconfig} apply -f ${manifestFile} -n ${namespace}"
-        }
+        
       }
     }
   }
