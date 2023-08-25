@@ -42,7 +42,7 @@ pipeline { writeFile file: '/tmp/kubeconfig', text: kubeconfig
     stage('Deploy to Kubernetes') {
       steps {
         withCredentials([file(credentialsId: 'kube_cluster', variable: 'kubeconfig')]) {
-          writeFile file: '/tmp/kubeconfig', text: kubeconfig
+        //  writeFile file: '/tmp/kubeconfig', text: kubeconfig
          
           sh "kubectl --kubeconfig=${kubeconfig} apply -f ${manifestFile} -n ${namespace}"
         }
