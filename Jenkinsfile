@@ -43,7 +43,7 @@ pipeline {
       steps {
         withCredentials([file(credentialsId: 'kube_cluster', variable: 'kubeconfig')]) {
           writeFile file: '/tmp/kubeconfig', text: kubeconfig
-          sh "kubectl config use-context lexi"
+         
           sh "kubectl apply -f ${manifestFile} -n ${namespace}"
         }
       }
