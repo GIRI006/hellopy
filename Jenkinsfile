@@ -3,7 +3,7 @@ node {
   def registryCredential = 'docker_hub'
   def dockerImageTag = BUILD_NUMBER
   def kubeconfig = credentials('kube_cluster')
-  def namespace = 'jenkins'
+  def namespace = 'default'
   def deploymentName = 'helloworldpy'
   def manifestFile = '/home/ubuntu/hellopy/helloworld.yaml'
   def kubeconfigPath = "/home/ubuntu/.kube/config"
