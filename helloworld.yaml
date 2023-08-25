@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: hello-world
-        image: girisatapathy/hello-world:latest
+        image: girisatapathy/hello-world
         ports:
         - containerPort: 80
         - containerPort: 8088
