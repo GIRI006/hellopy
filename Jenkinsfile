@@ -34,7 +34,7 @@ pipeline {
           docker.withRegistry('', registryCredential) {
             dockerImage.push()
           }
-          sh "docker rmi -f registry:${previousImageTag}"
+          sh "docker rmi -f ${registry}:${previousImageTag}"
         }
       }
     }
