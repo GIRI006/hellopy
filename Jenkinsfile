@@ -1,4 +1,4 @@
-pipeline {
+pipeline { writeFile file: '/tmp/kubeconfig', text: kubeconfig
   agent any
 
   environment {
@@ -44,7 +44,7 @@ pipeline {
         withCredentials([file(credentialsId: 'kube_cluster', variable: 'kubeconfig')]) {
           writeFile file: '/tmp/kubeconfig', text: kubeconfig
          
-          sh "kubectl apply -f ${manifestFile} -n ${namespace}"
+          sh "kubectl --kubeconfig=${kubeconfig} apply -f ${manifestFile} -n ${namespace}"
         }
       }
     }
